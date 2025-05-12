@@ -1,0 +1,28 @@
+#include <winsock2.h>
+#include <stdio.h>
+#pragma comment(lib, "ws2_32.lib")
+
+int main() {
+WSADATA wsa; SOCKET s, c; struct sockaddr_in serv, cli; int t;
+char msg[1024];
+
+WSAStartup(MAKEWORD(2,2), &wsa);
+s = socket(AF_INET, SOCK_STREAM, 0);
+serv.sin_family = AF_INET;
+serv.sin_addr.s_addr = INADDR_ANY;
+serv.sin_port = htons(8888);
+
+bind(s, (struct sockaddr*)&serv, sizeof(serv));
+listen(s, 1);
+t = sizeof(cli);
+c = accept(s, (struct sockaddr*)&cli, &t);
+
+recv(c, msg, sizeof(msg), 0);
+printf("Cliente disse: %s\n", msg);
+send(c, "Recebido", 8, 0);
+
+closesocket(c);
+closesocket(s);
+WSACleanup();
+return 0;
+}
